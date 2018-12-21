@@ -104,3 +104,7 @@ Now the output of the previous example will be:
   "_e_sb_long": 5
 }
 ```
+
+## License
+
+Licensed under [MIT license LICENSE](./LICENSE) or (http://opensource.org/licenses/MIT)
