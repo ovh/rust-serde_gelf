@@ -83,7 +83,7 @@ To send special type like number or boolean, LDP uses suffixes to force ES type:
 | _bool             | boolean  | Expected values: "true" or "false".WARNING : GELF does not support boolean types you will have to send "true" or "false" in String |
 | Everything else   | String   | Anything else will be considered a string                                                                                          |
 
-To enable LDP suffixes, update `Cargo.toml` to enable the *ldp* feature:
+To enable suffixes, update `Cargo.toml` and set the *ldp* feature:
 ```toml
 serde_gelf = { version = "0.1", features = ["ldp"] }
 # or
