@@ -134,6 +134,18 @@ impl GelfRecordBuilder for GelfRecord {
     }
 }
 
+impl GelfRecordGetter for GelfRecord {
+    fn message(&self) -> String { self.short_message.clone() }
+    fn timestamp(&self) -> f64 { self.timestamp }
+    fn level(&self) -> GelfLevel { GelfLevel::from(self.level) }
+    fn additional_fields(&self) -> BTreeMap<String, Value> { self.additional_fields.clone() }
+    fn facility(&self) -> String { self.facility.clone() }
+    fn line(&self) -> u32 { self.line }
+    fn file(&self) -> String { self.file.clone() }
+    fn version() -> &'static str { "1.1" }
+    fn full_message(&self) -> Option<String> { self.full_message.clone() }
+}
+
 impl<'a> From<&log::Record<'a>> for GelfRecord {
     fn from(record: &log::Record) -> GelfRecord {
         GelfRecord::new()

@@ -1,6 +1,6 @@
 use log::Level;
 
-#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone, PartialOrd, PartialEq)]
 pub enum GelfLevel {
     Emergency = 0,
     Alert = 1,
@@ -38,6 +38,22 @@ impl From<&GelfLevel> for Level {
             GelfLevel::Informational => Level::Info,
             GelfLevel::Warning => Level::Warn,
             _ => Level::Error,
+        }
+    }
+}
+
+impl From<u32> for GelfLevel {
+    fn from(level: u32) -> GelfLevel {
+        match level {
+            0 => GelfLevel::Emergency,
+            1 => GelfLevel::Alert,
+            2 => GelfLevel::Critical,
+            3 => GelfLevel::Error,
+            4 => GelfLevel::Warning,
+            5 => GelfLevel::Notice,
+            6 => GelfLevel::Informational,
+            7 => GelfLevel::Debugging,
+            _ => GelfLevel::Alert,
         }
     }
 }
