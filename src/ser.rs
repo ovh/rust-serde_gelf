@@ -1,21 +1,21 @@
-use serde_value::Value;
 use std::collections::BTreeMap;
+
+use serde_value::Value;
 
 struct KeySerializer;
 
-#[cfg(not(feature = "ldp"))]
+#[cfg(not(feature = "ovh-ldp"))]
 impl KeySerializer {
     fn format_key(xpath: &str, key: &str, value: &Value) -> String {
         match (xpath, key) {
-            ("", "") => String::new(),
-            (x, "") => String::new(),
+            (_, "") => String::new(),
             ("", k) => format!("_{}", k),
             (x, k) => format!("{}_{}", x, k)
         }
     }
 }
 
-#[cfg(feature = "ldp")]
+#[cfg(feature = "ovh-ldp")]
 impl KeySerializer {
     fn _schema_suffix(value: &Value) -> &str {
         match *value {
@@ -28,8 +28,7 @@ impl KeySerializer {
     }
     fn format_key(xpath: &str, key: &str, value: &Value) -> String {
         match (xpath, key) {
-            ("", "") => String::new(),
-            (x, "") => String::new(),
+            (_, "") => String::new(),
             ("", k) => format!("_{}{}", k, KeySerializer::_schema_suffix(value)),
             (x, k) => format!("{}_{}{}", x, k, KeySerializer::_schema_suffix(value)),
         }
@@ -55,7 +54,6 @@ impl<'a> GelfField<'a> {
                     let key = match k {
                         Value::String(data) => format!("{}", data),
                         Value::Char(data) => format!("{}", data),
-//                        Value::Bytes(data) => format!("{}", data),
                         _ => panic!("Map keys MUST be strings, bytes or char")
                     };
                     parts.append(&mut GelfField::new(

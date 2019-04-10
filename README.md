@@ -83,13 +83,13 @@ To send special type like number or boolean, LDP uses suffixes to force ES type:
 | _bool             | boolean  | Expected values: "true" or "false".WARNING : GELF does not support boolean types you will have to send "true" or "false" in String |
 | Everything else   | String   | Anything else will be considered a string                                                                                          |
 
-To enable suffixes, update `Cargo.toml` and set the *ldp* feature:
+To enable suffixes, update `Cargo.toml` and set the *ovh-ldp* feature:
 ```toml
-serde_gelf = { version = "0.1", features = ["ldp"] }
+serde_gelf = { version = "0.1", features = ["ovh-ldp"] }
 # or
 [dependencies.serde_gelf]
 version = "0.1"
-features = ["ldp"]
+features = ["ovh-ldp"]
 ```
 Now the output of the previous example will be:
 ```json
@@ -102,6 +102,86 @@ Now the output of the previous example will be:
   "_d_k2_bool": false,
   "_e_sa": "test",
   "_e_sb_long": 5
+}
+```
+
+## Macros
+
+This library provides macros to create gelf objects. To enable macros, just activate the macros on crate import:
+
+```rust
+#[macro_use]
+extern crate serde_gelf;
+```
+
+### gelf!
+
+This macro is a shortcut to create a flatten representation of a serializable struct:
+
+```rust
+    let mut extra = BTreeMap::new();
+    extra.insert("a".to_string(), Value::I64(85));
+    extra.insert("b".to_string(), Value::F64(65.892));
+
+    println!("{}", serde_json::to_string_pretty(&gelf!(&extra).unwrap()).unwrap());
+```
+The output will be (with _ovh-ldp_ feature):
+```json
+{
+  "_a_long": 85,
+  "_b_float": 65.892
+}
+```
+
+### gelf_record!
+
+This macro will create a record according to the [GELF Payload Specification](http://docs.graylog.org/en/3.0/pages/gelf.html#gelf-payload-specification):
+
+```rust
+    let mut extra = BTreeMap::new();
+    extra.insert("a".to_string(), Value::I64(85));
+    extra.insert("b".to_string(), Value::F64(65.892));
+    
+    println!("{}",  serde_json::to_string_pretty(&gelf_record!("Message with the default level")).unwrap());
+    println!("{}",  serde_json::to_string_pretty(&gelf_record!(level: GelfLevel::Informational, "Informational message")).unwrap());
+    println!("{}",  serde_json::to_string_pretty(&gelf_record!(level: GelfLevel::Informational, extra: &extra, "Informational message with extra")).unwrap());
+```
+The output will be (with _ovh-ldp_ feature):
+```json
+{
+  "facility": "src",
+  "file": "examples/src/main.rs",
+  "host": "myDesk",
+  "level": 1,
+  "_levelname": "Alert",
+  "line": 21,
+  "short_message": "Message with the default level",
+  "timestamp": 1554907321.6123526,
+  "version": "1.1"
+}
+{
+  "facility": "src",
+  "file": "examples/src/main.rs",
+  "host": "myDesk",
+  "level": 6,
+  "_levelname": "Informational",
+  "line": 22,
+  "short_message": "Informational message",
+  "timestamp": 1554907321.6124547,
+  "version": "1.1"
+}
+{
+  "facility": "src",
+  "file": "examples/src/main.rs",
+  "host": "myDesk",
+  "level": 6,
+  "_levelname": "Informational",
+  "line": 23,
+  "short_message": "Informational message with extra",
+  "timestamp": 1554907321.612552,
+  "version": "1.1",
+  "_a_long": 85,
+  "_b_float": 65.892
 }
 ```
 
