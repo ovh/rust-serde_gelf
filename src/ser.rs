@@ -2,11 +2,13 @@ use std::collections::BTreeMap;
 
 use serde_value::Value;
 
+use crate::error::Result;
+
 struct KeySerializer;
 
 #[cfg(not(feature = "ovh-ldp"))]
 impl KeySerializer {
-    fn format_key(xpath: &str, key: &str, value: &Value) -> String {
+    fn format_key(xpath: &str, key: &str, _value: &Value) -> String {
         match (xpath, key) {
             (_, "") => String::new(),
             ("", k) => format!("_{}", k),
@@ -83,5 +85,12 @@ impl<'a> GelfField<'a> {
     }
 }
 
+pub fn to_string_pretty<T: ?Sized>(value: &T) -> Result<String> where T: serde::Serialize {
+    let f = GelfField::new("", "", &serde_value::to_value(value)?);
+    Ok(serde_json::to_string_pretty(&f.disassemble())?)
+}
 
-
+pub fn to_string<T: ?Sized>(value: &T) -> Result<String> where T: serde::Serialize {
+    let f = GelfField::new("", "", &serde_value::to_value(value)?);
+    Ok(serde_json::to_string(&f.disassemble())?)
+}
