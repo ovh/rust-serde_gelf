@@ -1,6 +1,7 @@
-# serde_gelf [![Build Status](https://travis-ci.org/cdumay/rust-serde_gelf.svg?branch=master)](https://travis-ci.org/cdumay/rust-serde_gelf) [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD3-green.svg)](./LICENSE)
+# serde_gelf [![Build Status](https://travis-ci.org/cdumay/rust-serde_gelf.svg?branch=master)](https://travis-ci.org/cdumay/rust-serde_gelf) [![Latest version](https://img.shields.io/crates/v/serde_gelf.svg)](https://crates.io/crates/serde_gelf) [![Documentation](https://docs.rs/serde_gelf/badge.svg)](https://docs.rs/serde_gelf) ![License](https://img.shields.io/crates/l/serde_gelf.svg)
 
-Gelf serialization using serde
+The Graylog Extended Log Format (GELF) is a structured log format 
+representation which can be sent over network as a JSON string.
 
 ## Quickstart
 
