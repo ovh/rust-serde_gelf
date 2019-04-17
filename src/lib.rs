@@ -35,18 +35,17 @@
 //!
 //! ```toml
 //! [dependencies]
-//! serde_gelf = "0.1"
 //! serde_derive = "1.0"
+//! serde_gelf = "0.1"
 //! ```
 //!
 //! Then, create a structure which implement the `serde::Serialize` trait:
 //!
 //! ```rust
-//! extern crate serde_gelf;
-//! 
 //! #[macro_use]
 //! extern crate serde_derive;
-//! 
+//! extern crate serde_gelf;
+//!
 //! #[derive(Serialize)]
 //! struct Foo {
 //!     a: u32,
@@ -55,31 +54,64 @@
 //!
 //! fn main() {
 //!     let foo = Foo { a: 15, b: "hello".into() };
-//!     println!("{}", serde_gelf::to_string_pretty(&foo).unwrap());
+//!     println!("{:?}", serde_gelf::to_flat_dict(&foo).unwrap());
 //! }
 //! ```
 //! **Output**:
-//! ```json
-//! {
-//!   "_a": 15,
-//!   "_b": "hello"
-//! }
+//! ```text
+//! {"_a": U32(15), "_b": String("hello")}
 //! ```
-#![deny(warnings)]
+#![doc(
+    html_logo_url = "https://eu.api.ovh.com/images/com-square-bichro.png",
+    html_favicon_url = "https://www.ovh.com/favicon.ico",
+)]
+#![deny(warnings, missing_docs)]
 extern crate log;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
 extern crate serde_value;
 
-#[doc(inline)]
-pub use self::ser::{to_string, to_string_pretty};
+pub use level::GelfLevel;
+pub use record::{GelfRecord, GelfRecordBuilder, GelfRecordGetter, GelfRecordSetter};
 
-pub mod ser;
-pub mod error;
-pub mod record;
-pub mod level;
+mod ser;
+mod record;
+mod level;
 
 #[macro_use]
 mod macros;
+
+/// Transform any serializable object into a single level hashmap of key / value.
+///
+/// # Examples
+///
+/// ```rust
+/// #[macro_use]
+/// extern crate serde_derive;
+/// extern crate serde_gelf;
+///
+/// #[derive(Serialize)]
+/// struct SubFoo {
+///     c: bool,
+///     d: String,
+/// }
+///
+/// #[derive(Serialize)]
+/// struct Foo {
+///     a: u32,
+///     b: SubFoo,
+/// }
+///
+/// fn main() {
+///     let foo = Foo { a: 15, b: SubFoo { c: true, d: "hello".into() }};
+///     println!("{:?}", serde_gelf::to_flat_dict(&foo).unwrap());
+/// }
+/// ```
+/// **Output**:
+/// ```text
+/// {"_a": U32(15), "_b_c": Bool(true), "_b_d": String("hello")}
+/// ```
+pub fn to_flat_dict<S: ?Sized>(value: &S) -> Result<std::collections::BTreeMap<String, serde_value::Value>, serde_value::SerializerError> where S: serde::Serialize {
+    Ok(ser::FlatSerializer::disassemble("", "", &serde_value::to_value(value)?))
+}

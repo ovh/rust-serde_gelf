@@ -1,8 +1,16 @@
+// Copyright 2019-present, OVH SAS
+// All rights reserved.
+//
+// This OVH Software is licensed to you under the MIT license <LICENSE-MIT
+// https://opensource.org/licenses/MIT> or the Modified BSD license <LICENSE-BSD
+// https://opensource.org/licenses/BSD-3-Clause>, at your option. This file may not be copied,
+// modified, or distributed except according to those terms. Please review the Licences for the
+// specific language governing permissions and limitations relating to use of the SAFE Network
+// Software.
+
 use std::collections::BTreeMap;
 
 use serde_value::Value;
-
-use crate::error::Result;
 
 struct KeySerializer;
 
@@ -37,60 +45,31 @@ impl KeySerializer {
     }
 }
 
-#[derive(Debug)]
-pub struct GelfField<'a> {
-    xpath: &'a str,
-    key: &'a str,
-    value: Value,
-}
+pub struct FlatSerializer;
 
-impl<'a> GelfField<'a> {
-    pub fn new(xpath: &'a str, key: &'a str, value: &Value) -> GelfField<'a> {
-        GelfField { xpath, key, value: value.clone() }
-    }
-    pub fn disassemble(&self) -> BTreeMap<String, Value> {
+impl FlatSerializer {
+    pub fn disassemble(xpath: &str, key: &str, value: &Value) -> BTreeMap<String, Value> {
         let mut parts = BTreeMap::new();
-        match self.value {
+        match value {
             Value::Map(ref tree) => {
                 for (k, v) in tree.iter() {
-                    let key = match k {
+                    let subkey = match k {
                         Value::String(data) => format!("{}", data),
                         Value::Char(data) => format!("{}", data),
-                        _ => panic!("Map keys MUST be strings, bytes or char")
+                        _ => panic!("Map keys MUST be strings or char")
                     };
-                    parts.append(&mut GelfField::new(
-                        &KeySerializer::format_key(self.xpath, self.key, &self.value),
-                        &key,
-                        v,
-                    ).disassemble());
+                    parts.append(&mut Self::disassemble(&KeySerializer::format_key(xpath, &key, value), &subkey, v));
                 };
             }
             Value::Seq(ref values) => {
                 for (i, val) in values.iter().enumerate() {
-                    parts.append(&mut GelfField::new(
-                        &KeySerializer::format_key(self.xpath, self.key, &self.value),
-                        &format!("{}", i),
-                        val,
-                    ).disassemble());
+                    parts.append(&mut Self::disassemble(&mut KeySerializer::format_key(xpath, key, value), &format!("{}", i), val));
                 }
             }
             _ => {
-                parts.insert(
-                    KeySerializer::format_key(self.xpath, self.key, &self.value),
-                    self.value.clone(),
-                );
+                parts.insert(KeySerializer::format_key(xpath, key, value), value.clone());
             }
         };
         parts
     }
-}
-
-pub fn to_string_pretty<T: ?Sized>(value: &T) -> Result<String> where T: serde::Serialize {
-    let f = GelfField::new("", "", &serde_value::to_value(value)?);
-    Ok(serde_json::to_string_pretty(&f.disassemble())?)
-}
-
-pub fn to_string<T: ?Sized>(value: &T) -> Result<String> where T: serde::Serialize {
-    let f = GelfField::new("", "", &serde_value::to_value(value)?);
-    Ok(serde_json::to_string(&f.disassemble())?)
 }

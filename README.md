@@ -7,21 +7,21 @@ Gelf serialization using serde
 Add in your `Cargo.toml`:
 ```toml
 [dependencies]
-serde_gelf = "0.1"
-serde_derive = "1.0"
 serde-value = "0.5"
+serde_derive = "1.0"
+serde_gelf = "0.1"
+serde_json = "1.0"
 ```
 
 Create a structure which implement the `Serialize` trait: 
 ```rust
-extern crate serde_gelf;
-extern crate serde_value;
-
 #[macro_use]
 extern crate serde_derive;
+extern crate serde_gelf;
+extern crate serde_json;
+extern crate serde_value;
 
-use serde_value::Value;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 #[derive(Serialize)]
 struct SubFoo {
@@ -34,7 +34,7 @@ struct Foo {
     a: u32,
     b: String,
     c: Vec<bool>,
-    d: HashMap<String, Value>,
+    d: BTreeMap<String, serde_value::Value>,
     e: SubFoo,
 }
 
@@ -44,14 +44,14 @@ fn main() {
         b: "hello".into(),
         c: vec![true, false],
         d: {
-            let mut map = HashMap::new();
-            map.insert("k1".to_string(), Value::F64(5.9));
-            map.insert("k2".to_string(), Value::Bool(false));
+            let mut map = BTreeMap::new();
+            map.insert("k1".to_string(), serde_value::Value::F64(5.9));
+            map.insert("k2".to_string(), serde_value::Value::Bool(false));
             map
         },
         e: SubFoo { sa: "test".to_string(), sb: 5 },
     };
-    println!("{}", to_string_pretty(&foo).unwrap());
+    println!("{}", serde_json::to_string_pretty(& serde_gelf::to_flat_dict(&foo).unwrap()).unwrap());
 }
 ```
 **Output**:
@@ -104,43 +104,22 @@ Now the output of the previous example will be:
 
 ## Macros
 
-This library provides macros to create gelf objects. To enable macros, just activate the macros on crate import:
+This library provides a macro `gelf_record!` to create a gelf record according 
+to the [GELF Payload Specification](http://docs.graylog.org/en/3.0/pages/gelf.html#gelf-payload-specification).
+
+To enable macros, just activate the macros on crate import:
 
 ```rust
-#[macro_use]
-extern crate serde_gelf;
-```
-
-### gelf!
-
-This macro is a shortcut to create a flatten representation of a serializable struct:
-
-```rust
-    let mut extra = BTreeMap::new();
-    extra.insert("a".to_string(), Value::I64(85));
-    extra.insert("b".to_string(), Value::F64(65.892));
-
-    println!("{}", serde_json::to_string_pretty(&gelf!(&extra).unwrap()).unwrap());
-```
-The output will be (with _ovh-ldp_ feature):
-```json
-{
-  "_a_long": 85,
-  "_b_float": 65.892
-}
-```
-
-### gelf_record!
-
-This macro will create a record according to the [GELF Payload Specification](http://docs.graylog.org/en/3.0/pages/gelf.html#gelf-payload-specification):
-
-```rust
-    let mut extra = BTreeMap::new();
-    extra.insert("a".to_string(), Value::I64(85));
-    extra.insert("b".to_string(), Value::F64(65.892));
+    #[macro_use]
+    extern crate serde_gelf;
     
     println!("{}",  serde_json::to_string_pretty(&gelf_record!("Message with the default level")).unwrap());
     println!("{}",  serde_json::to_string_pretty(&gelf_record!(level: GelfLevel::Informational, "Informational message")).unwrap());
+    
+    let mut extra = BTreeMap::new();
+    extra.insert("a".to_string(), serde_value::Value::I64(85));
+    extra.insert("b".to_string(), serde_value::Value::F64(65.892));
+    
     println!("{}",  serde_json::to_string_pretty(&gelf_record!(level: GelfLevel::Informational, extra: &extra, "Informational message with extra")).unwrap());
 ```
 The output will be (with _ovh-ldp_ feature):
@@ -184,4 +163,4 @@ The output will be (with _ovh-ldp_ feature):
 
 ## License
 
-Licensed under [MIT license LICENSE](./LICENSE) or (http://opensource.org/licenses/MIT)
+Licensed under [BSD 3-Clause License](./LICENSE) or (https://opensource.org/licenses/BSD-3-Clause)
