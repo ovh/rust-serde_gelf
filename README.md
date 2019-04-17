@@ -1,6 +1,6 @@
 # serde_gelf [![Build Status](https://travis-ci.org/cdumay/rust-serde_gelf.svg?branch=master)](https://travis-ci.org/cdumay/rust-serde_gelf) [![Latest version](https://img.shields.io/crates/v/serde_gelf.svg)](https://crates.io/crates/serde_gelf) [![Documentation](https://docs.rs/serde_gelf/badge.svg)](https://docs.rs/serde_gelf) ![License](https://img.shields.io/crates/l/serde_gelf.svg)
 
-The Graylog Extended Log Format (GELF) is a structured log format 
+The Graylog Extended Log Format ([GELF](http://docs.graylog.org/en/latest/pages/gelf.html#gelf-payload-specification)) is a structured log format 
 representation which can be sent over network as a JSON string.
 
 ## Quickstart
@@ -71,7 +71,7 @@ fn main() {
 
 ## OVH Logs Data Platform (LDP)
 
-To send special type like number or boolean, LDP uses suffixes to force ES type:
+To send special type like number or boolean, [LDP](https://docs.ovh.com/gb/en/logs-data-platform/) uses suffixes as [naming convention](https://docs.ovh.com/gb/en/logs-data-platform/field-naming-conventions/) to force ES type:
 
 | Suffix            | ES Type  | About                                                                                                                              |
 |-------------------|----------|------------------------------------------------------------------------------------------------------------------------------------|
@@ -106,7 +106,7 @@ Now the output of the previous example will be:
 ## Macros
 
 This library provides a macro `gelf_record!` to create a gelf record according 
-to the [GELF Payload Specification](http://docs.graylog.org/en/3.0/pages/gelf.html#gelf-payload-specification).
+to the GELF Payload Specification.
 
 To enable macros, just activate the macros on crate import:
 
