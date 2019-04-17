@@ -110,54 +110,27 @@ to the [GELF Payload Specification](http://docs.graylog.org/en/3.0/pages/gelf.ht
 To enable macros, just activate the macros on crate import:
 
 ```rust
-    #[macro_use]
-    extern crate serde_gelf;
-    
-    println!("{}",  serde_json::to_string_pretty(&gelf_record!("Message with the default level")).unwrap());
-    println!("{}",  serde_json::to_string_pretty(&gelf_record!(level: GelfLevel::Informational, "Informational message")).unwrap());
-    
-    let mut extra = BTreeMap::new();
-    extra.insert("a".to_string(), serde_value::Value::I64(85));
-    extra.insert("b".to_string(), serde_value::Value::F64(65.892));
-    
-    println!("{}",  serde_json::to_string_pretty(&gelf_record!(level: GelfLevel::Informational, extra: &extra, "Informational message with extra")).unwrap());
+#[macro_use]
+extern crate serde_gelf;
+extern crate serde_json;
+
+fn main() {
+    let rec = gelf_record!("hello");
+    println!("{}", serde_json::to_string_pretty(&rec).unwrap());
+}
 ```
-The output will be (with _ovh-ldp_ feature):
+**Output**:
 ```json
 {
   "facility": "src",
   "file": "examples/src/main.rs",
-  "host": "myDesk",
+  "host": "myhostname",
   "level": 1,
   "_levelname": "Alert",
-  "line": 21,
-  "short_message": "Message with the default level",
-  "timestamp": 1554907321.6123526,
+  "line": 11,
+  "short_message": "hello",
+  "timestamp": 1554980878.241851,
   "version": "1.1"
-}
-{
-  "facility": "src",
-  "file": "examples/src/main.rs",
-  "host": "myDesk",
-  "level": 6,
-  "_levelname": "Informational",
-  "line": 22,
-  "short_message": "Informational message",
-  "timestamp": 1554907321.6124547,
-  "version": "1.1"
-}
-{
-  "facility": "src",
-  "file": "examples/src/main.rs",
-  "host": "myDesk",
-  "level": 6,
-  "_levelname": "Informational",
-  "line": 23,
-  "short_message": "Informational message with extra",
-  "timestamp": 1554907321.612552,
-  "version": "1.1",
-  "_a_long": 85,
-  "_b_float": 65.892
 }
 ```
 
