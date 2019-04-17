@@ -1,4 +1,4 @@
-# serde_gelf [![Build Status](https://travis-ci.org/cdumay/rust-serde_gelf.svg?branch=master)](https://travis-ci.org/cdumay/rust-serde_gelf) [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](./LICENSE)
+# serde_gelf [![Build Status](https://travis-ci.org/cdumay/rust-serde_gelf.svg?branch=master)](https://travis-ci.org/cdumay/rust-serde_gelf) [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD3-green.svg)](./LICENSE)
 
 Gelf serialization using serde
 
