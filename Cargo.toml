@@ -1,7 +1,7 @@
 [package]
 name = "serde_gelf"
 version = "0.1.2"
-authors = ["Cédric Dumay <cedric.dumay@gmail.com>"]
+authors = ["Cédric Dumay <cedric.dumay@corp.ovh.com>"]
 edition = "2018"
 
 [features]
