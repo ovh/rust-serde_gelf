@@ -10,7 +10,9 @@ This project accepts contributions. In order to contribute, you should pay atten
 
 # Coding and documentation Style
 
-## LANGUAGE_GUIDELINES
+This is a set of recommendations on how to design and present APIs for the Rust programming language. They are authored largely by the Rust library team, based on experiences building the Rust standard library and other crates in the Rust ecosystem.
+
+[Read them here](https://rust-lang-nursery.github.io/api-guidelines).
 
 # Submitting Modifications
 
