@@ -1,4 +1,4 @@
-# serde_gelf [![Build Status](https://travis-ci.org/cdumay/rust-serde_gelf.svg?branch=master)](https://travis-ci.org/cdumay/rust-serde_gelf) [![Latest version](https://img.shields.io/crates/v/serde_gelf.svg)](https://crates.io/crates/serde_gelf) [![Documentation](https://docs.rs/serde_gelf/badge.svg)](https://docs.rs/serde_gelf) ![License](https://img.shields.io/crates/l/serde_gelf.svg)
+# serde_gelf [![Build Status](https://travis-ci.org/ovh/rust-serde_gelf.svg?branch=master)](https://travis-ci.org/ovh/rust-serde_gelf) [![Latest version](https://img.shields.io/crates/v/serde_gelf.svg)](https://crates.io/crates/serde_gelf) [![Documentation](https://docs.rs/serde_gelf/badge.svg)](https://docs.rs/serde_gelf) ![License](https://img.shields.io/crates/l/serde_gelf.svg)
 
 The Graylog Extended Log Format ([GELF](http://docs.graylog.org/en/latest/pages/gelf.html#gelf-payload-specification)) is a structured log format 
 representation which can be sent over network as a JSON string.
