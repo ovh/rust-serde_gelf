@@ -3,6 +3,10 @@ name = "serde_gelf"
 version = "0.1.2"
 authors = ["OVH SAS <github@ovh.net>"]
 edition = "2018"
+license = "BSD-3-Clause"
+license-file = "LICENSE"
+description = "Gelf serialization using serde."
+keywords = ["serde", "logs", "GELF"]
 
 [features]
 ovh-ldp = []
