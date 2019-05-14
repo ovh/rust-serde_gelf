@@ -1,7 +1,6 @@
 language: rust
 rust:
 - stable
-- beta
 - nightly
 matrix:
   allow_failures:
@@ -9,4 +8,5 @@ matrix:
 before_script:
 - PATH=$PATH:/home/travis/.cargo/bin
 script:
-- cargo build --verbose
+- cargo build --release --verbose
+- cargo build --all-features --release --verbose
