@@ -7,6 +7,9 @@ license = "BSD-3-Clause"
 license-file = "LICENSE"
 description = "Gelf serialization using serde."
 keywords = ["serde", "logs", "GELF"]
+readme = "README.md"
+repository = "https://github.com/ovh/rust-serde_gelf"
+
 
 [features]
 ovh-ldp = []
