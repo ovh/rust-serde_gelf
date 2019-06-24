@@ -13,7 +13,7 @@ representation which can be sent over network as a JSON string.
 Add in your `Cargo.toml`:
 ```toml
 [dependencies]
-serde-value = "0.5"
+serde-value = "0.6"
 serde_derive = "1.0"
 serde_gelf = "0.1"
 serde_json = "1.0"
