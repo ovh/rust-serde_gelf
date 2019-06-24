@@ -52,6 +52,6 @@ macro_rules! gelf_record {
             .add_additional_fields($extra.clone())
     }};
     (level: $level:expr, $($arg:tt)+ ) => {gelf_record!(level: $level, extra: &BTreeMap::new(), $($arg)+)};
-    (extra: $extra:expr, $($arg:tt)+ ) => {gelf_record!(level: $crate::level::GelfLevel::default(), extra: $extra, $($arg)+)};
-    ($($arg:tt)+) => {gelf_record!(level: $crate::level::GelfLevel::default(), extra: &BTreeMap::new(), $($arg)+)};
+    (extra: $extra:expr, $($arg:tt)+ ) => {gelf_record!(level: $crate::GelfLevel::default(), extra: $extra, $($arg)+)};
+    ($($arg:tt)+) => {gelf_record!(level: $crate::GelfLevel::default(), extra: &BTreeMap::new(), $($arg)+)};
 }
