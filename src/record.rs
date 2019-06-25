@@ -14,7 +14,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use serde_value::Value;
 
 use crate::level::GelfLevel;
-use crate::ser::FlatSerializer;
+use crate::to_flat_dict;
 
 /// Builder for [`GelfRecord`](struct.GelfRecord.html).
 ///
@@ -68,7 +68,7 @@ pub trait GelfRecordBuilder {
     /// let rec = GelfRecord::new()
     ///     .extend_additional_fields(extra);
     /// ```
-    fn add_additional_fields(self, additional_fields: BTreeMap<String, Value>) -> Self;
+    fn add_additional_fields(self, additional_fields: BTreeMap<Value, Value>) -> Self;
     /// Extend a already flatten dict to `GelfRecord.additional_fields`.
     ///
     /// # Example
@@ -83,7 +83,7 @@ pub trait GelfRecordBuilder {
     /// let rec = GelfRecord::new()
     ///     .extend_additional_fields(to_flat_dict(&extra).unwrap());
     /// ```
-    fn extend_additional_fields(self, additional_fields: BTreeMap<String, serde_value::Value>) -> Self;
+    fn extend_additional_fields(self, additional_fields: BTreeMap<Value, Value>) -> Self;
     /// Set `GelfRecord.facility`.
     fn set_facility(self, facility: String) -> Self;
     /// Set `GelfRecord.line`.
@@ -123,7 +123,7 @@ pub trait GelfRecordGetter {
     /// Return the `GelfRecord.level` attribute.
     fn level(&self) -> GelfLevel;
     /// Return the `GelfRecord.additional_fields` attribute.
-    fn additional_fields(&self) -> BTreeMap<String, Value>;
+    fn additional_fields(&self) -> BTreeMap<Value, Value>;
     /// Return the `GelfRecord.facility` attribute.
     fn facility(&self) -> String;
     /// Return the `GelfRecord.line`attribute.
@@ -165,7 +165,7 @@ pub struct GelfRecord {
     /// field. Allowed characters in field names are any word character (letter, number,
     /// underscore), dashes and dots. The verifying regular expression is: ^[\w\.\-]*$.
     #[serde(flatten)]
-    additional_fields: BTreeMap<String, serde_value::Value>,
+    additional_fields: BTreeMap<Value, Value>,
 }
 
 /// Default timestamp in seconds since UNIX epoch with optional decimal places for milliseconds.
@@ -238,10 +238,10 @@ impl GelfRecordBuilder for GelfRecord {
     /// let rec = GelfRecord::new()
     ///     .extend_additional_fields(to_flat_dict(&extra).unwrap());
     /// ```
-    fn add_additional_fields(mut self, additional_fields: BTreeMap<String, serde_value::Value>) -> Self {
+    fn add_additional_fields(mut self, additional_fields: BTreeMap<Value, Value>) -> Self {
         match serde_value::to_value(&additional_fields) {
             Ok(value) => {
-                self.additional_fields.extend(FlatSerializer::disassemble("", "", &value));
+                self.additional_fields.extend( to_flat_dict(&value).unwrap());
                 self
             }
             Err(_) => self
@@ -262,7 +262,7 @@ impl GelfRecordBuilder for GelfRecord {
     /// let rec = GelfRecord::new()
     ///     .extend_additional_fields(to_flat_dict(&extra).unwrap());
     /// ```
-    fn extend_additional_fields(mut self, additional_fields: BTreeMap<String, serde_value::Value>) -> Self {
+    fn extend_additional_fields(mut self, additional_fields: BTreeMap<Value, Value>) -> Self {
         self.additional_fields.extend(additional_fields);
         self
     }
@@ -299,7 +299,7 @@ impl GelfRecordGetter for GelfRecord {
     /// Return the `GelfRecord.level` attribute.
     fn level(&self) -> GelfLevel { GelfLevel::from(self.level) }
     /// Return the `GelfRecord.additional_fields` attribute.
-    fn additional_fields(&self) -> BTreeMap<String, Value> { self.additional_fields.clone() }
+    fn additional_fields(&self) -> BTreeMap<Value, Value> { self.additional_fields.clone() }
     /// Return the `GelfRecord.facility` attribute.
     fn facility(&self) -> String { self.facility.clone() }
     /// Return the `GelfRecord.line`attribute.

@@ -1,6 +1,6 @@
 [package]
 name = "serde_gelf"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["OVH SAS <github@ovh.net>"]
 edition = "2018"
 license = "BSD-3-Clause"
@@ -12,12 +12,13 @@ repository = "https://github.com/ovh/rust-serde_gelf"
 
 
 [features]
-ovh-ldp = []
+ovh-ldp = ["serde-value-flatten/ovh-ldp"]
 
 [dependencies]
+hostname = "0.1"
+log = "0.4"
 serde = "1.0"
 serde-value = "0.6"
+serde-value-flatten = "0.1"
 serde_derive = "1.0"
-log = "0.4"
-hostname = "0.1"
 serde_json = "1.0"

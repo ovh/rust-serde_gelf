@@ -62,8 +62,8 @@
 //! {"_a": U32(15), "_b": String("hello")}
 //! ```
 #![doc(
-    html_logo_url = "https://eu.api.ovh.com/images/com-square-bichro.png",
-    html_favicon_url = "https://www.ovh.com/favicon.ico",
+html_logo_url = "https://eu.api.ovh.com/images/com-square-bichro.png",
+html_favicon_url = "https://www.ovh.com/favicon.ico",
 )]
 #![deny(warnings, missing_docs)]
 extern crate log;
@@ -71,11 +71,11 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_value;
+extern crate serde_value_flatten;
 
 pub use level::GelfLevel;
 pub use record::{GelfRecord, GelfRecordBuilder, GelfRecordGetter, GelfRecordSetter};
 
-mod ser;
 mod record;
 mod level;
 
@@ -112,6 +112,6 @@ mod macros;
 /// ```text
 /// {"_a": U32(15), "_b_c": Bool(true), "_b_d": String("hello")}
 /// ```
-pub fn to_flat_dict<S: ?Sized>(value: &S) -> Result<std::collections::BTreeMap<String, serde_value::Value>, serde_value::SerializerError> where S: serde::Serialize {
-    Ok(ser::FlatSerializer::disassemble("", "", &serde_value::to_value(value)?))
+pub fn to_flat_dict<S: ?Sized>(value: &S) -> Result<std::collections::BTreeMap<serde_value::Value, serde_value::Value>, serde_value::SerializerError> where S: serde::Serialize {
+    serde_value_flatten::to_flatten_maptree("_", Some("_"), value)
 }
