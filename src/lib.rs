@@ -71,7 +71,7 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_value;
-extern crate serde_value_flatten;
+extern crate serde_value_utils;
 
 pub use level::GelfLevel;
 pub use record::{GelfRecord, GelfRecordBuilder, GelfRecordGetter, GelfRecordSetter};
@@ -113,5 +113,5 @@ mod macros;
 /// {"_a": U32(15), "_b_c": Bool(true), "_b_d": String("hello")}
 /// ```
 pub fn to_flat_dict<S: ?Sized>(value: &S) -> Result<std::collections::BTreeMap<serde_value::Value, serde_value::Value>, serde_value::SerializerError> where S: serde::Serialize {
-    serde_value_flatten::to_flatten_maptree("_", Some("_"), value)
+    serde_value_utils::to_flatten_maptree("_", Some("_"), value)
 }
